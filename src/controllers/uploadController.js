@@ -18,7 +18,7 @@ export const upProfilePicture = async (req, res) => {
         }
 
         // Pastikan id_user dikirim di body
-        const { id_user } = req.user.id_user;
+        const id_user = req.user.id;
         if (!id_user) {
             return res
                 .status(400)

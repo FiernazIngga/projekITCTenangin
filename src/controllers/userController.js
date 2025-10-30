@@ -2,7 +2,7 @@ import { fetchUserData } from "../models/userModels.js";
 
 export const dataUser = async (req, res, next) => {
     try {
-        const { user_id } = req.user.id_user;
+        const user_id = req.user.id;
         if (!user_id) {
             return res.status(400).json({ message: "user_id tidak ditemukan" });
         }
