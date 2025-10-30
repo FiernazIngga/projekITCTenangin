@@ -77,8 +77,10 @@ import multer from "multer";
 import path from "path";
 import { supabase } from "../databases/supabaseClient.js";
 
-// Simpan file di memory (bukan disk)
+// Gunakan memoryStorage agar tidak menulis ke filesystem (aman di Vercel)
 const upload = multer({ storage: multer.memoryStorage() });
+
+// Middleware upload untuk 1 file dengan field name 'file'
 export const uploadMiddleware = upload.single("file");
 
 // Upload foto profil ke Supabase Storage
@@ -92,14 +94,21 @@ export const upProfilePicture = async (req, res) => {
         const ext = path.extname(req.file.originalname);
         const fileName = `${userId}_fotoprofile_${Date.now()}${ext}`;
 
-        // Cek dan hapus file lama
-        const { data: files } = await supabase.storage.from("profile_pictures").list();
+        // Hapus file lama (kalau ada)
+        const { data: files, error: listError } = await supabase.storage
+            .from("profile_pictures")
+            .list();
+        if (listError) throw listError;
+
         const oldFiles = files.filter(f => f.name.startsWith(`${userId}_fotoprofile_`));
         if (oldFiles.length > 0) {
-            await supabase.storage.from("profile_pictures").remove(oldFiles.map(f => f.name));
+            const { error: deleteError } = await supabase.storage
+                .from("profile_pictures")
+                .remove(oldFiles.map(f => f.name));
+            if (deleteError) throw deleteError;
         }
 
-        // Upload baru ke Supabase
+        // Upload file baru
         const { error: uploadError } = await supabase.storage
             .from("profile_pictures")
             .upload(fileName, req.file.buffer, {
@@ -110,11 +119,13 @@ export const upProfilePicture = async (req, res) => {
         if (uploadError) throw uploadError;
 
         // Ambil URL publik
-        const { data } = supabase.storage.from("profile_pictures").getPublicUrl(fileName);
+        const { data: publicData } = supabase.storage
+            .from("profile_pictures")
+            .getPublicUrl(fileName);
 
-        res.json({
+        res.status(200).json({
             message: "✅ Upload foto profil berhasil!",
-            url: data.publicUrl,
+            url: publicData.publicUrl,
         });
     } catch (err) {
         console.error("❌ Error upload foto profil:", err);
