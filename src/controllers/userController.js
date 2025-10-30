@@ -1,4 +1,4 @@
-import { fetchUserData } from "../models/userModels.js";
+import { getUserData } from "../models/userModels.js";
 
 export const dataUser = async (req, res, next) => {
     try {
@@ -6,7 +6,7 @@ export const dataUser = async (req, res, next) => {
         if (!user_id) {
             return res.status(400).json({ message: "user_id tidak ditemukan" });
         }
-        const data = await fetchUserData(user_id);
+        const data = await getUserData(user_id);
         const SUPABASE_URL = "https://hmrznbfwznbwehcmffmx.supabase.co";
         const STORAGE_PATH = "/storage/v1/object/public/profile_pictures/";
 
