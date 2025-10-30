@@ -2,7 +2,7 @@ import multer from "multer";
 import path from "path";
 import { supabase } from "../databases/supabaseClient.js";
 
-// Gunakan memoryStorage agar tidak menyimpan file ke disk
+// ✅ Gunakan memory storage (sudah cocok untuk serverless)
 const upload = multer({ storage: multer.memoryStorage() });
 export const uploadMiddleware = upload.single("file");
 
@@ -10,33 +10,40 @@ export const uploadMiddleware = upload.single("file");
 export const upProfilePicture = async (req, res) => {
     try {
         if (!req.file) {
-            return res.status(400).json({ error: "Tidak ada file yang diupload" });
+            return res
+                .status(400)
+                .json({ error: "Tidak ada file yang diupload" });
         }
 
         const userId = req.params.userId || "unknown";
         const ext = path.extname(req.file.originalname);
         const fileName = `${userId}_fotoprofile_${Date.now()}${ext}`;
-        const fileBuffer = req.file.buffer; // 📦 langsung ambil dari buffer
+        const fileBuffer = req.file.buffer;
 
-        // 🟡 1️⃣ Cek foto profil lama user
+        // 🟡 Hapus foto lama (kalau ada)
         const { data: files, error: listError } = await supabase.storage
             .from("profile_pictures")
-            .list();
+            .list("", { limit: 100 });
 
         if (listError) throw listError;
 
-        const oldFiles = files.filter((f) => f.name.startsWith(`${userId}_fotoprofile_`));
+        const oldFiles = (files || []).filter((f) =>
+            f.name.startsWith(`${userId}_fotoprofile_`)
+        );
 
         if (oldFiles.length > 0) {
             const { error: deleteError } = await supabase.storage
                 .from("profile_pictures")
                 .remove(oldFiles.map((f) => f.name));
             if (deleteError) throw deleteError;
-            console.log("🧹 File lama dihapus:", oldFiles.map((f) => f.name));
+            console.log(
+                "File lama dihapus:",
+                oldFiles.map((f) => f.name)
+            );
         }
 
-        // 🟢 2️⃣ Upload foto baru ke Supabase
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        // 🟢 Upload foto baru
+        const { error: uploadError } = await supabase.storage
             .from("profile_pictures")
             .upload(fileName, fileBuffer, {
                 contentType: req.file.mimetype,
@@ -45,18 +52,18 @@ export const upProfilePicture = async (req, res) => {
 
         if (uploadError) throw uploadError;
 
-        // 🟢 3️⃣ Ambil URL publik
-        const publicUrl = supabase.storage
+        // 🟢 Dapatkan URL publik
+        const { data: urlData } = supabase.storage
             .from("profile_pictures")
-            .getPublicUrl(fileName).data.publicUrl;
+            .getPublicUrl(fileName);
 
-        res.json({
-            message: "✅ Upload foto profil berhasil!",
-            url: publicUrl,
+        return res.status(200).json({
+            message: "Upload foto profil berhasil!",
+            url: urlData.publicUrl,
         });
     } catch (err) {
-        console.error("❌ Error upload foto profil:", err);
-        res.status(500).json({ error: err.message });
+        console.error("❌ Error upload foto profil:", err.message);
+        return res.status(500).json({ error: err.message });
     }
 };
 
@@ -64,33 +71,40 @@ export const upProfilePicture = async (req, res) => {
 export const upVideos = async (req, res) => {
     try {
         if (!req.file) {
-            return res.status(400).json({ error: "Tidak ada file yang diupload" });
+            return res
+                .status(400)
+                .json({ error: "Tidak ada file yang diupload" });
         }
 
         const userId = req.params.userId || "unknown";
         const ext = path.extname(req.file.originalname);
         const fileName = `${userId}_video_${Date.now()}${ext}`;
-        const fileBuffer = req.file.buffer; // 📦 langsung ambil dari buffer
+        const fileBuffer = req.file.buffer;
 
-        // 🟡 1️⃣ Hapus video lama (opsional)
+        // 🟡 Hapus video lama (optional)
         const { data: files, error: listError } = await supabase.storage
             .from("videos")
-            .list();
+            .list("", { limit: 100 });
 
         if (listError) throw listError;
 
-        const oldFiles = files.filter((f) => f.name.startsWith(`${userId}_video_`));
+        const oldFiles = (files || []).filter((f) =>
+            f.name.startsWith(`${userId}_video_`)
+        );
 
         if (oldFiles.length > 0) {
             const { error: deleteError } = await supabase.storage
                 .from("videos")
                 .remove(oldFiles.map((f) => f.name));
             if (deleteError) throw deleteError;
-            console.log("🧹 Video lama dihapus:", oldFiles.map((f) => f.name));
+            console.log(
+                "🧹 Video lama dihapus:",
+                oldFiles.map((f) => f.name)
+            );
         }
 
-        // 🟢 2️⃣ Upload video baru
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        // 🟢 Upload video baru
+        const { error: uploadError } = await supabase.storage
             .from("videos")
             .upload(fileName, fileBuffer, {
                 contentType: req.file.mimetype,
@@ -99,17 +113,17 @@ export const upVideos = async (req, res) => {
 
         if (uploadError) throw uploadError;
 
-        // 🟢 3️⃣ Ambil URL publik
-        const publicUrl = supabase.storage
+        // 🟢 Ambil URL publik
+        const { data: urlData } = supabase.storage
             .from("videos")
-            .getPublicUrl(fileName).data.publicUrl;
+            .getPublicUrl(fileName);
 
-        res.json({
-            message: "✅ Upload video berhasil!",
-            url: publicUrl,
+        return res.status(200).json({
+            message: "Upload video berhasil!",
+            url: urlData.publicUrl,
         });
     } catch (err) {
-        console.error("❌ Error upload video:", err);
-        res.status(500).json({ error: err.message });
+        console.error("Error upload video:", err.message);
+        return res.status(500).json({ error: err.message });
     }
 };
