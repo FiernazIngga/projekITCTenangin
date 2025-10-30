@@ -34,18 +34,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Internal Server Error" });
 });
 
-// ==========================
-// Mode hybrid: lokal & Vercel
-const PORT = process.env.PORT || 3000;
-
-// Jika dijalankan di lokal, jalankan listen
-if (!process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`✅ Server aktif di http://localhost:${PORT}`);
-  });
-} else {
-  console.log("✅ Server siap dijalankan di lingkungan Vercel (serverless)");
-}
 
 // Export untuk Vercel
 export default app;
