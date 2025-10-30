@@ -15,7 +15,7 @@ app.use(cookieParser());
 // Import routes
 import tampilAwal from "./src/routes/homeRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
-// import users from "./src/routes/userRoute.js";
+import users from "./src/routes/userRoute.js";
 // import quoteRoutes from "./src/routes/quoteRoutes.js";
 // import videoRoutes from "./src/routes/videoRoutes.js";
 import uploadFile from "./src/routes/uploadRoute.js";
@@ -25,7 +25,7 @@ app.use("/", tampilAwal);
 // ==========================
 // Mount routes ke URL path
 app.use("/api/auth", authRoutes);
-// app.use("/api/data", moodRoutes);
+app.use("/api/data", users);
 // app.use("/api/quotes", quoteRoutes);
 // app.use("/api/videos", videoRoutes);
 app.use("/api/upload", uploadFile);
