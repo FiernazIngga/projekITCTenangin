@@ -1,25 +1,15 @@
-import express from "express";
-import { uploadMiddleware } from "../middleware/upload.js";
-import { upProfilePicture, upVideos } from "../controllers/uploadController.js";
-import { verifyToken } from "../middleware/authMiddleware.js";
+// import express from "express";
+// import { uploadMiddleware } from "../middleware/upload.js";
+// import { upProfilePicture, upVideos } from "../controllers/uploadController.js";
+// import { verifyToken } from "../middleware/authMiddleware.js";
 
-const router = express.Router();
+// const router = express.Router();
+// // ==========================
+// // Upload video
+// router.post(
+//     "/video",
+//     uploadMiddleware, // sama juga
+//     upVideos
+// );
 
-// ==========================
-// Upload foto profil
-router.post(
-    "/profile/:userId",
-    verifyToken,
-    uploadMiddleware, // pakai ini
-    upProfilePicture
-);
-
-// ==========================
-// Upload video
-router.post(
-    "/video",
-    uploadMiddleware, // sama juga
-    upVideos
-);
-
-export default router;
+// export default router;

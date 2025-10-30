@@ -1,8 +1,8 @@
-import express from "express";
-import { getQuotes } from "../controllers/quoteController.js";
+// import express from "express";
+// import { getQuotes } from "../controllers/quoteController.js";
 
-const router = express.Router();
+// const router = express.Router();
 
-router.get("/", getQuotes);
+// router.get("/", getQuotes);
 
-export default router;
+// export default router;

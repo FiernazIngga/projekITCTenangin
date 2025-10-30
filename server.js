@@ -14,17 +14,17 @@ app.use(cookieParser());
 // ==========================
 // Import routes
 import authRoutes from "./src/routes/authRoutes.js";
-import moodRoutes from "./src/routes/moodRoutes.js";
-import quoteRoutes from "./src/routes/quoteRoutes.js";
-import videoRoutes from "./src/routes/videoRoutes.js";
+// import moodRoutes from "./src/routes/moodRoutes.js";
+// import quoteRoutes from "./src/routes/quoteRoutes.js";
+// import videoRoutes from "./src/routes/videoRoutes.js";
 import uploadFile from "./src/routes/uploadRoute.js";
 
 // ==========================
 // Mount routes ke URL path
 app.use("/api/auth", authRoutes);
-app.use("/api/mood", moodRoutes);
-app.use("/api/quotes", quoteRoutes);
-app.use("/api/videos", videoRoutes);
+// app.use("/api/mood", moodRoutes);
+// app.use("/api/quotes", quoteRoutes);
+// app.use("/api/videos", videoRoutes);
 app.use("/api/upload", uploadFile);
 
 // ==========================
