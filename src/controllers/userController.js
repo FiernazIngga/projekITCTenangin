@@ -16,7 +16,7 @@ export const dataUser = async (req, res, next) => {
                 ? `${SUPABASE_URL}${STORAGE_PATH}${data.foto_profile}`
                 : null,
         };
-
+        delete userData.foto_profile;
         res.status(200).json(userData);
     } catch (err) {
         console.error("Gagal mengambil data user:", err.message);

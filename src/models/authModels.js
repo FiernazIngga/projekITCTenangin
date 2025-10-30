@@ -66,7 +66,7 @@ export const loginUser = async (req, res) => {
         const accessToken = jwt.sign(
             safeUserData,
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "30s" }
+            { expiresIn: "5m" }
         );
 
         // 6️⃣ Buat Refresh Token
@@ -126,7 +126,7 @@ export const ambilNewAccessToken = async (userId) => {
     const newAccessToken = jwt.sign(
         safeUserData,
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "30s" }
+        { expiresIn: "5m" }
     );
 
     return newAccessToken; // kembalikan ke controller
