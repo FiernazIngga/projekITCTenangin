@@ -19,7 +19,7 @@ export const verifyToken = (req, res, next) => {
                 message: 'Unauthorized: Invalid or expired token'
             });
         }
-        req.userId = decoded.id;
+        req.user = decoded;
         next();
     });
 }
