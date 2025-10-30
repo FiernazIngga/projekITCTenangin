@@ -13,11 +13,14 @@ app.use(cookieParser());
 
 // ==========================
 // Import routes
+import tampilAwal from "./src/routes/homeRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
 // import moodRoutes from "./src/routes/moodRoutes.js";
 // import quoteRoutes from "./src/routes/quoteRoutes.js";
 // import videoRoutes from "./src/routes/videoRoutes.js";
 import uploadFile from "./src/routes/uploadRoute.js";
+
+app.use("/", tampilAwal);
 
 // ==========================
 // Mount routes ke URL path

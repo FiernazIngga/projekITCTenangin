@@ -1,14 +1,7 @@
 import express from 'express';
 const router = express.Router();
 
-import { login, logoutUser, mainPage, refreshTokenUser, register } from '../controllers/authController.js';
-
-// ==========================
-// Route utama /
-// Method: GET
-// Deskripsi: Menampilkan halaman utama (mainPage)
-// Response: text/plain atau HTML
-router.get('/', mainPage);
+import { login, logoutUser, refreshTokenUser, register } from '../controllers/authController.js';
 
 // ==========================
 // Route register user

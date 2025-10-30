@@ -137,13 +137,6 @@ import {
     registerUser,
 } from "../models/authModels.js";
 
-// ==========================
-// Main Page
-export const mainPage = (req, res) => {
-    // Jika nanti kamu mau tampilkan HTML, pindahkan file ke folder "public"
-    // bukaFile(res, 'mainPage.html', '../public');
-    res.send("Hello World");
-};
 
 // ==========================
 // REGISTER USER
