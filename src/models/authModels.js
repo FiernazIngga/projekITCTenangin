@@ -36,10 +36,10 @@ export const registerUser = async (email, password, name) => {
 // Login user
 export const loginUser = async (req, res) => {
     try {
-        const { name, password } = req.body;
+        const { email, password } = req.body;
 
         // 1️⃣ Validasi input
-        if (!name || !password) {
+        if (!email || !password) {
             throw new Error("Nama dan password wajib diisi");
         }
 
@@ -47,7 +47,7 @@ export const loginUser = async (req, res) => {
         const { data: user, error } = await supabase
             .from("users")
             .select("*")
-            .eq("username", name)
+            .eq("email", name)
             .single();
 
         if (error || !user) {
@@ -80,7 +80,7 @@ export const loginUser = async (req, res) => {
         const { error: updateError } = await supabase
             .from("users")
             .update({ refresh_token: refreshToken })
-            .eq("username", user.username);
+            .eq("email", user.email);
 
         if (updateError) {
             throw new Error("Gagal menyimpan refresh token");
