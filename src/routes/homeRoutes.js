@@ -1,5 +1,5 @@
 import express from 'express';
-import { kirimPesanController } from '../controllers/homeController';
+import { kirimPesanController } from '../controllers/homeController.js';
 const router = express.Router();
 
 router.get("/", (req, res) => {
