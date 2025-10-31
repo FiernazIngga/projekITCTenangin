@@ -13,16 +13,22 @@ import {
 // REGISTER USER
 export const register = async (req, res) => {
     try {
-        const { email, password, name } = req.body;
-        if (!email || !password || !name)
+        const { email, password, name, confirm } = req.body;
+        // Cek field kosong
+        if (!email || !password || !name || !confirm) {
             return res.status(400).json({ message: "Semua field wajib diisi" });
-
+        }
+        // Cek password dan konfirmasi
+        if (password !== confirm) {
+            return res.status(400).json({ message: "Password dan konfirmasi password tidak sama" });
+        }
         await registerUser(email, password, name);
         res.status(201).json({ message: "Registrasi berhasil" });
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
 };
+
 
 // ==========================
 // LOGIN USER
