@@ -4,9 +4,10 @@ dotenv.config();
 
 export const verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
+    
     if (!authHeader) {
         return res.status(403).json({
-            message: 'No token provided'
+            message: 'No token provided' // 🔹 Tidak ada token
         });
     }
 
@@ -15,14 +16,27 @@ export const verifyToken = (req, res, next) => {
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err) {
-            return res.status(401).json({
-                message: 'Unauthorized: Invalid or expired token'
-            });
+            if (err.name === "TokenExpiredError") {
+                return res.status(401).json({
+                    message: 'Token expired' // 🔹 Token kadaluarsa
+                });
+            } else if (err.name === "JsonWebTokenError") {
+                return res.status(401).json({
+                    message: 'Invalid token' // 🔹 Token salah / tidak valid
+                });
+            } else {
+                return res.status(401).json({
+                    message: 'Unauthorized'
+                });
+            }
         }
-        req.user = decoded;
+
+        // Jika token valid
+        req.userId = decoded.id;
         next();
     });
-}
+};
+
 
 // verifyToken
 // ==========================
