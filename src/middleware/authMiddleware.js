@@ -32,7 +32,7 @@ export const verifyToken = (req, res, next) => {
         }
 
         // Jika token valid
-        req.userId = decoded.id;
+        req.user = decoded;
         next();
     });
 };
