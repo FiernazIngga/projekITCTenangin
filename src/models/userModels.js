@@ -5,8 +5,18 @@ export const getUserData = async (user_id) => {
     try {
         const { data, error } = await supabase
             .from("users")
-            .select("id, foto_profile, username, email, password")
-            .eq("id", user_id) 
+            .select(`
+                id,
+                foto_profile,
+                username,
+                email,
+                password,
+                created_at,
+                umur,
+                jenis_kelamin,
+                lokasi
+            `)
+            .eq("id", user_id)
             .single(); 
 
         if (error) throw error;
@@ -16,3 +26,4 @@ export const getUserData = async (user_id) => {
         throw err;
     }
 };
+
