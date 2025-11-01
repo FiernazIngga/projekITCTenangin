@@ -66,7 +66,6 @@ export const dataUserDashboard = async (req, res, next) => {
     }
 };
 
-
 export const kirimUserMood = async (req, res, next) => {
     try {
         const user_id = req.user.id;
@@ -75,8 +74,21 @@ export const kirimUserMood = async (req, res, next) => {
         const { mood, note } = req.body;
         if (!mood) return res.status(400).json({ message: "Mood wajib diisi" });
 
-        const newMood = await insertUserMood(user_id, mood, note || "");
+        let newMood = await insertUserMood(user_id, mood, note || "");
         if (!newMood) return res.status(500).json({ message: "Gagal menyimpan mood" });
+
+        // ubah format created_at
+        if (newMood.created_at) {
+            const dateObj = new Date(newMood.created_at);
+            const yyyy = dateObj.getFullYear();
+            const mm = String(dateObj.getMonth() + 1).padStart(2, "0"); // bulan 0-11
+            const dd = String(dateObj.getDate()).padStart(2, "0");
+            const hh = String(dateObj.getHours()).padStart(2, "0");
+            const min = String(dateObj.getMinutes()).padStart(2, "0");
+            const sec = String(dateObj.getSeconds()).padStart(2, "0");
+
+            newMood.created_at = `${yyyy}-${mm}-${dd} ${hh}:${min}:${sec}`;
+        }
 
         res.status(201).json({ message: "Mood berhasil disimpan", data: newMood });
     } catch (err) {
