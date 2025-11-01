@@ -44,6 +44,19 @@ export const dataUserDashboard = async (req, res, next) => {
 
         const data = await getUserData(user_id);
         const allMoods = await getUserMoods(user_id);
+        let latestMood = await ambilMoodTerbaru(user_id);
+
+        if (latestMood?.created_at) {
+            const dateObj = new Date(latestMood.created_at);
+            const yyyy = dateObj.getFullYear();
+            const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
+            const dd = String(dateObj.getDate()).padStart(2, "0");
+            const hh = String(dateObj.getHours()).padStart(2, "0");
+            const min = String(dateObj.getMinutes()).padStart(2, "0");
+            const sec = String(dateObj.getSeconds()).padStart(2, "0");
+
+            latestMood.created_at = `${yyyy}-${mm}-${dd} ${hh}:${min}:${sec}`;
+        }
 
         const userData = {
             id: data.id ?? "Belum ada ID",
@@ -56,7 +69,8 @@ export const dataUserDashboard = async (req, res, next) => {
             jenis_kelamin: data.jenis_kelamin ?? "Belum diatur",
             lokasi: data.lokasi ?? "Belum diatur",
             joined_date: data.created_at ? data.created_at.split("T")[0] : "Belum ada tanggal",
-            moods: allMoods || []
+            moods: allMoods || [],
+            latest_mood: latestMood || null
         };
 
         res.status(200).json(userData);
