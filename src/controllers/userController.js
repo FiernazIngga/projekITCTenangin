@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { ambilMoodTerbaru, getUserData, getUserMoods } from "../models/userModels.js";
+import { ambilMoodTerbaru, getUserData, getUserMoods, insertUserMood } from "../models/userModels.js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const STORAGE_PATH = "/storage/v1/object/public/profile_pictures/";
@@ -63,5 +63,24 @@ export const dataUserDashboard = async (req, res, next) => {
     } catch (err) {
         console.error("Gagal mengambil data user dashboard:", err.message);
         next(err);
+    }
+};
+
+
+export const kirimUserMood = async (req, res, next) => {
+    try {
+        const user_id = req.user.id;
+        if (!user_id) return res.status(400).json({ message: "user_id tidak ditemukan" });
+
+        const { mood, note } = req.body;
+        if (!mood) return res.status(400).json({ message: "Mood wajib diisi" });
+
+        const newMood = await insertUserMood(user_id, mood, note || "");
+        if (!newMood) return res.status(500).json({ message: "Gagal menyimpan mood" });
+
+        res.status(201).json({ message: "Mood berhasil disimpan", data: newMood });
+    } catch (err) {
+        console.error("Error kirimUserMood:", err.message);
+        res.status(500).json({ message: "Terjadi kesalahan server" });
     }
 };
