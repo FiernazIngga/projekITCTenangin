@@ -27,3 +27,52 @@ export const getUserData = async (user_id) => {
     }
 };
 
+export const insertUserMood = async (user_id, mood, note) => {
+    try {
+        const { data, error } = await supabase
+            .from('moods')
+            .insert([{ user_id, mood, note }])
+            .select();
+
+        if (error) throw error;
+        return data[0] || null;
+    } catch (err) {
+        console.error("Gagal insert mood:", err.message);
+        return null;
+    }
+};
+
+export const ambilMoodTerbaru = async (user_id) => {
+    try {
+        const { data, error } = await supabase
+            .from('moods')
+            .select('*')
+            .eq('user_id', user_id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+
+        if (error) throw error;
+        return data || null;
+    } catch (err) {
+        console.error("Gagal ambil mood terbaru:", err.message);
+        return null;
+    }
+};
+
+
+export const getUserMoods = async (user_id) => {
+    try {
+        const { data, error } = await supabase
+            .from('moods')
+            .select('*')
+            .eq('user_id', user_id)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        return data || [];
+    } catch (err) {
+        console.error("Gagal ambil semua mood user:", err.message);
+        return [];
+    }
+};
