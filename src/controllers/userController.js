@@ -3,6 +3,7 @@ dotenv.config();
 
 import {
     ambilMoodTerbaru,
+    getQuote,
     getUserData,
     getUserMoods,
     insertUserMood,
@@ -123,11 +124,10 @@ export const kirimUserMood = async (req, res, next) => {
         if (!newMood)
             return res.status(500).json({ message: "Gagal menyimpan mood" });
 
-        // ubah format created_at
         if (newMood.created_at) {
             const dateObj = new Date(newMood.created_at);
             const yyyy = dateObj.getFullYear();
-            const mm = String(dateObj.getMonth() + 1).padStart(2, "0"); // bulan 0-11
+            const mm = String(dateObj.getMonth() + 1).padStart(2, "0"); 
             const dd = String(dateObj.getDate()).padStart(2, "0");
             const hh = String(dateObj.getHours()).padStart(2, "0");
             const min = String(dateObj.getMinutes()).padStart(2, "0");
@@ -143,5 +143,28 @@ export const kirimUserMood = async (req, res, next) => {
     } catch (err) {
         console.error("Error kirimUserMood:", err.message);
         res.status(500).json({ message: "Terjadi kesalahan server" });
+    }
+};
+
+
+export const kirimQuote = async (req, res, next) => {
+    try {
+        const user_id = req.user?.id;
+        if (!user_id) {
+            return res.status(400).json({ message: "user_id tidak ditemukan" });
+        }
+        const tanggalHariIni = new Date().getDate();
+        const quote = await getQuote(tanggalHariIni);
+        if (!quote) {
+            return res.status(500).json({ message: "Gagal menyimpan mood" });
+        }
+        return res.status(200).json({
+            message: "Quote berhasil dikirim",
+            data: quote
+        });
+
+    } catch (error) {
+        console.error("Error kirimUserQuote:", error.message);
+        return res.status(500).json({ message: "Terjadi kesalahan server" });
     }
 };

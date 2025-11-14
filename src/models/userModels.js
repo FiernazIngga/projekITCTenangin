@@ -76,3 +76,19 @@ export const getUserMoods = async (user_id) => {
         return [];
     }
 };
+
+export const getQuote = async (id_quote) => {
+    try {
+        const { data, error } = await supabase
+            .from('quote')
+            .select('*')
+            .eq('id_quote', id_quote)
+            .limit(1)
+            .single();
+        if (error) throw error;
+        return data || null;
+    } catch (error) {
+        console.error("Gagal ambil quote terbaru:", error.message);
+        return null;
+    }
+};
