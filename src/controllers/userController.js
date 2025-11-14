@@ -4,6 +4,7 @@ dotenv.config();
 import {
     ambilMoodTerbaru,
     getQuote,
+    getRekomendasiVideo,
     getUserData,
     getUserMoods,
     insertUserMood,
@@ -162,6 +163,28 @@ export const kirimQuote = async (req, res, next) => {
             message: "Quote berhasil dikirim",
             data: quote
         });
+
+    } catch (error) {
+        console.error("Error kirimUserQuote:", error.message);
+        return res.status(500).json({ message: "Terjadi kesalahan server" });
+    }
+};
+
+export const kirimVideo = async (req, res, next) => {
+    try {
+        const user_id = req.user?.id;
+        if (!user_id) {
+            return res.status(400).json({ message: "user_id tidak ditemukan" });
+        }
+        const mood = ambilMoodTerbaru(user_id);
+        if (!mood) {
+            return res.status(500).json({ message: "Terjadi kesalahan server" });
+        }
+        const video = await getRekomendasiVideo(mood);
+        if (!video) {
+            return res.status(500).json({ message: "Gagal mengambil video" });
+        }
+        return res.status(200).json({data: video});
 
     } catch (error) {
         console.error("Error kirimUserQuote:", error.message);

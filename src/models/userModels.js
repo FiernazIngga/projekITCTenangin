@@ -92,3 +92,20 @@ export const getQuote = async (id_quote) => {
         return null;
     }
 };
+
+export const getRekomendasiVideo = async (mood_user) => {
+    try {
+        const { data, error } = await supabase
+            .from('videos')
+            .select('*')
+            .eq('mood_video', mood_user)
+            .order('random()')
+            .limit(5);
+
+        if (error) throw error;
+        return data || [];
+    } catch (error) {
+        console.error("Gagal ambil video:", error.message);
+        return [];
+    }
+};
