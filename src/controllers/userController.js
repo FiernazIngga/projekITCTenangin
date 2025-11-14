@@ -156,7 +156,7 @@ export const kirimQuote = async (req, res, next) => {
         const tanggalHariIni = new Date().getDate();
         const quote = await getQuote(tanggalHariIni);
         if (!quote) {
-            return res.status(500).json({ message: "Gagal menyimpan mood" });
+            return res.status(500).json({ message: "Gagal mengambil mood" });
         }
         return res.status(200).json({
             message: "Quote berhasil dikirim",

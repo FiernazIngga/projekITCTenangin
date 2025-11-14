@@ -80,7 +80,7 @@ export const getUserMoods = async (user_id) => {
 export const getQuote = async (id_quote) => {
     try {
         const { data, error } = await supabase
-            .from('quote')
+            .from('quotes')
             .select('*')
             .eq('id_quote', id_quote)
             .limit(1)
