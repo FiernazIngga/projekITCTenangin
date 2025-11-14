@@ -100,8 +100,6 @@ export const getRekomendasiVideo = async (mood_user) => {
             .from('videos')
             .select('*')
             .eq('mood_video', mood_user)
-            .order('random()')
-            .limit(5);
 
         if (error) throw error;
         return data || [];
