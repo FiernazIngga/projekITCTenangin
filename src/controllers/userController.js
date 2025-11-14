@@ -177,7 +177,7 @@ export const kirimVideo = async (req, res, next) => {
             return res.status(400).json({ message: "user_id tidak ditemukan" });
         }
         const mood = ambilMoodTerbaru(user_id);
-        if (!mood) {
+        if (!mood || Array.isArray(mood) && video.length === 0) {
             return res.status(500).json({ message: "Terjadi kesalahan server" });
         }
         const video = await getRekomendasiVideo(mood);
