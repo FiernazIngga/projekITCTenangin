@@ -181,7 +181,7 @@ export const kirimVideo = async (req, res, next) => {
             return res.status(500).json({ message: "Terjadi kesalahan server" });
         }
         const video = await getRekomendasiVideo(mood);
-        if (!video) {
+        if (!video || Array.isArray(video) && video.length === 0) {
             return res.status(500).json({ message: "Gagal mengambil video" });
         }
         return res.status(200).json({data: video});
