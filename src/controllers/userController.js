@@ -178,12 +178,12 @@ export const kirimVideo = async (req, res, next) => {
         }
         const mood = await ambilMoodTerbaru(user_id);
         if (!mood) {
-            return res.status(500).json({ message: "Terjadi kesalahan server" });
+            return res.status(500).json({ message: "Minimal isi 1 mood terlebih dahulu" });
         }
         const mood_user = mood.mood;
         const video = await getRekomendasiVideo(mood_user);
         if (!video || Array.isArray(video) && video.length === 0) {
-            return res.status(500).json({ message: "Gagal mengambil video" });
+            return res.status(500).json({ message: "Gagal mengambil video, terjadi kesalahan server" });
         }
         return res.status(200).json({data: video});
 
