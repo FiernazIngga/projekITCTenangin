@@ -95,6 +95,7 @@ export const getQuote = async (id_quote) => {
 
 export const getRekomendasiVideo = async (mood_user) => {
     try {
+        console.log("HASIL MOOD:", mood_user);
         const { data, error } = await supabase
             .from('videos')
             .select('*')
