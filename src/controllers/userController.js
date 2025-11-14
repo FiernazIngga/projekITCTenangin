@@ -29,6 +29,7 @@ export const dataUser = async (req, res, next) => {
                 ? `${SUPABASE_URL}${STORAGE_PATH}${data.foto_profile}`
                 : "Belum ada foto",
             username: data.username ?? "Belum ada username",
+            fullname: data.fullname ?? "Belum diisi",
             email: data.email ?? "Belum ada email",
             umur: data.umur ?? "Belum diatur",
             jenis_kelamin: data.jenis_kelamin ?? "Belum diatur",
