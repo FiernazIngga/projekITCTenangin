@@ -4,6 +4,6 @@ import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/upFotoProfile", verifyToken, uploadMiddleware, profileAksi);
+router.post("/aksiProfile", verifyToken, uploadMiddleware, profileAksi);
 
 export default router;
