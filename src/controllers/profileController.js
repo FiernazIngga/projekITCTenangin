@@ -83,74 +83,94 @@ export const uploadMiddleware = upload.single("file");
 export const profileAksi = async (req, res) => {
     try {
         const user_id = req.user?.id;
-        if (!user_id) return res.status(400).json({ message: "User tidak ditemukan" });
+        if (!user_id)
+            return res.status(400).json({ message: "User tidak ditemukan" });
 
-        const { username, email, umur, jenis_kelamin, lokasi, fullname, password } = req.body;
+        // Tentukan dari mana ambil data
+        let body = {};
+        let file = null;
+
+        if (req.is("multipart/form-data")) {
+            // Kalau form-data, ambil dari req.body + req.file
+            body = req.body;
+            file = req.file;
+        } else if (req.is("application/json")) {
+            // Kalau JSON biasa, ambil dari req.body
+            body = req.body;
+        }
+
+        const {
+            username,
+            email,
+            fullname,
+            umur,
+            jenis_kelamin,
+            lokasi,
+            password,
+        } = body;
 
         let updateData = {};
         if (username) updateData.username = username;
         if (email) updateData.email = email;
-        if (umur) updateData.umur = umur;
         if (fullname) updateData.fullname = fullname;
+        if (umur) updateData.umur = umur;
         if (jenis_kelamin) updateData.jenis_kelamin = jenis_kelamin;
         if (lokasi) updateData.lokasi = lokasi;
         if (password) updateData.password = password;
 
-        // 🔹 Kalau ada foto baru
-        if (req.file) {
-            const ext = path.extname(req.file.originalname);
+        // Kalau ada file, upload ke Supabase
+        if (file) {
+            const ext = path.extname(file.originalname);
             const fileName = `${user_id}_fotoprofile_${Date.now()}${ext}`;
 
-            // Hapus foto lama kalau ada
-            const { data: files, error: listError } = await supabase.storage
+            // Hapus foto lama
+            const { data: files } = await supabase.storage
                 .from("profile_pictures")
                 .list();
-            if (listError) throw listError;
-
-            const oldFiles = files.filter(f => f.name.startsWith(`${user_id}_fotoprofile_`));
+            const oldFiles = files.filter((f) =>
+                f.name.startsWith(`${user_id}_fotoprofile_`)
+            );
             if (oldFiles.length > 0) {
-                const { error: deleteError } = await supabase.storage
+                await supabase.storage
                     .from("profile_pictures")
-                    .remove(oldFiles.map(f => f.name));
-                if (deleteError) throw deleteError;
+                    .remove(oldFiles.map((f) => f.name));
             }
 
-            // Upload foto baru
-            const { error: uploadError } = await supabase.storage
+            // Upload file baru
+            await supabase.storage
                 .from("profile_pictures")
-                .upload(fileName, req.file.buffer, {
-                    contentType: req.file.mimetype,
+                .upload(fileName, file.buffer, {
+                    contentType: file.mimetype,
                     upsert: true,
                 });
-            if (uploadError) throw uploadError;
-
             updateData.foto_profile = fileName;
         }
 
-        // Update DB
-        const { data: updatedUser, error: updateError } = await supabase
+        // Update database
+        const { data: updatedUser } = await supabase
             .from("users")
             .update(updateData)
             .eq("id", user_id)
-            .select() // ambil data terbaru
+            .select()
             .single();
-        if (updateError) throw updateError;
 
-        // Ambil URL foto profil
+        // Ambil URL foto
         let foto_url = updatedUser.foto_profile
-            ? supabase.storage.from("profile_pictures").getPublicUrl(updatedUser.foto_profile).data.publicUrl
+            ? supabase.storage
+                  .from("profile_pictures")
+                  .getPublicUrl(updatedUser.foto_profile).data.publicUrl
             : null;
 
-        // Balikkan data user terbaru
+        // Kembalikan data user
         const userData = {
-            id: updatedUser.id ?? "Belum ada ID",
+            id: updatedUser.id,
             foto_profile_url: foto_url ?? "Belum ada foto",
-            username: updatedUser.username ?? "Belum ada username",
-            fullname: updatedUser.fullname ?? "Belum ada fullname",
-            email: updatedUser.email ?? "Belum ada email",
-            umur: updatedUser.umur ?? "Belum diatur",
-            jenis_kelamin: updatedUser.jenis_kelamin ?? "Belum diatur",
-            lokasi: updatedUser.lokasi ?? "Belum diatur",
+            username: updatedUser.username,
+            fullname: updatedUser.fullname,
+            email: updatedUser.email,
+            umur: updatedUser.umur,
+            jenis_kelamin: updatedUser.jenis_kelamin,
+            lokasi: updatedUser.lokasi,
             joined_date: updatedUser.created_at
                 ? updatedUser.created_at.split("T")[0]
                 : "Belum ada tanggal",
@@ -160,7 +180,6 @@ export const profileAksi = async (req, res) => {
             message: "Profil berhasil diperbarui",
             data: userData,
         });
-
     } catch (err) {
         console.error("❌ Error edit profile:", err);
         res.status(500).json({ error: err.message });
