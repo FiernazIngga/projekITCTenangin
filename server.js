@@ -35,7 +35,7 @@ app.use("/", tampilAwal);
 // Mount routes ke URL path
 app.use("/api/auth", authRoutes);
 app.use("/api/data", users);
-app.use("/api/upload", uploadFile);
+app.use("/api/porfil", uploadFile);
 
 // ==========================
 // Error handling global

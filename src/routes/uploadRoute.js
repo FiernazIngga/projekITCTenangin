@@ -1,9 +1,9 @@
 import express from "express";
-import { uploadMiddleware, upProfilePicture } from "../controllers/uploadController.js";
+import { profileAksi, uploadMiddleware } from "../controllers/profileController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/upFotoProfile", verifyToken, uploadMiddleware, upProfilePicture);
+router.post("/upFotoProfile", verifyToken, uploadMiddleware, profileAksi);
 
 export default router;

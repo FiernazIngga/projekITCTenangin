@@ -16,7 +16,7 @@ const STORAGE_PATH = "/storage/v1/object/public/profile_pictures/";
 // Data user + hanya mood terbaru
 export const dataUser = async (req, res, next) => {
     try {
-        const user_id = req.user.id;
+        const user_id = req.user?.id;
         if (!user_id)
             return res.status(400).json({ message: "user_id tidak ditemukan" });
 
@@ -49,7 +49,7 @@ export const dataUser = async (req, res, next) => {
 // Data user + semua mood untuk dashboard
 export const dataUserDashboard = async (req, res, next) => {
     try {
-        const user_id = req.user.id;
+        const user_id = req.user?.id;
         if (!user_id)
             return res.status(400).json({ message: "user_id tidak ditemukan" });
 
@@ -94,6 +94,7 @@ export const dataUserDashboard = async (req, res, next) => {
                 ? `${SUPABASE_URL}${STORAGE_PATH}${data.foto_profile}`
                 : "Belum ada foto",
             username: data.username ?? "Belum ada username",
+            fullname: data.fullname ?? "Belum diisi",
             email: data.email ?? "Belum ada email",
             umur: data.umur ?? "Belum diatur",
             jenis_kelamin: data.jenis_kelamin ?? "Belum diatur",
@@ -114,7 +115,7 @@ export const dataUserDashboard = async (req, res, next) => {
 
 export const kirimUserMood = async (req, res, next) => {
     try {
-        const user_id = req.user.id;
+        const user_id = req.user?.id;
         if (!user_id)
             return res.status(400).json({ message: "user_id tidak ditemukan" });
 

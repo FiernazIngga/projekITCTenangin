@@ -14,7 +14,8 @@ export const getUserData = async (user_id) => {
                 created_at,
                 umur,
                 jenis_kelamin,
-                lokasi
+                lokasi,
+                fullname
             `)
             .eq("id", user_id)
             .single(); 
