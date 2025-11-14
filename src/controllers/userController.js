@@ -176,11 +176,12 @@ export const kirimVideo = async (req, res, next) => {
         if (!user_id) {
             return res.status(400).json({ message: "user_id tidak ditemukan" });
         }
-        const mood = ambilMoodTerbaru(user_id);
-        if (!mood || Array.isArray(mood) && video.length === 0) {
+        const mood = await ambilMoodTerbaru(user_id);
+        if (!mood) {
             return res.status(500).json({ message: "Terjadi kesalahan server" });
         }
-        const video = await getRekomendasiVideo(mood);
+        const mood_user = mood.mood;
+        const video = await getRekomendasiVideo(mood_user);
         if (!video || Array.isArray(video) && video.length === 0) {
             return res.status(500).json({ message: "Gagal mengambil video" });
         }
