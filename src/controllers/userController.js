@@ -180,7 +180,7 @@ export const kirimVideo = async (req, res, next) => {
         }
         const mood = await ambilMoodTerbaru(user_id);
         if (!mood) {
-            return res.status(500).json({ message: "Minimal isi 1 mood terlebih dahulu" });
+            return res.status(422).json({ message: "Minimal isi 1 mood terlebih dahulu" });
         }
         const mood_user = mood.mood;
         const video = await getRekomendasiVideo(mood_user);
