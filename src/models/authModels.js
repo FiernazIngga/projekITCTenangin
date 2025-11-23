@@ -40,7 +40,7 @@ export const loginUser = async (req, res) => {
 
         // 1️⃣ Validasi input
         if (!email || !password) {
-            throw new Error("Nama dan password wajib diisi");
+            throw new Error("Email dan password wajib diisi");
         }
 
         // 2️⃣ Cek user berdasarkan username
@@ -51,7 +51,7 @@ export const loginUser = async (req, res) => {
             .single();
 
         if (error || !user) {
-            throw new Error("Nama tidak ditemukan");
+            throw new Error("Email tidak ditemukan");
         }
 
         // 3️⃣ Cocokkan password polos (kalau belum pakai hash)
