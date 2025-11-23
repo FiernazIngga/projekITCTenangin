@@ -107,6 +107,7 @@ export const profileAksi = async (req, res) => {
             jenis_kelamin,
             lokasi,
             password,
+            deskripsi,
         } = body;
 
         let updateData = {};
@@ -117,6 +118,7 @@ export const profileAksi = async (req, res) => {
         if (jenis_kelamin) updateData.jenis_kelamin = jenis_kelamin;
         if (lokasi) updateData.lokasi = lokasi;
         if (password) updateData.password = password;
+        if (deskripsi) updateData.deskripsi = deskripsi;
 
         // Kalau ada file, upload ke Supabase
         if (file) {
@@ -171,6 +173,7 @@ export const profileAksi = async (req, res) => {
             umur: updatedUser.umur,
             jenis_kelamin: updatedUser.jenis_kelamin,
             lokasi: updatedUser.lokasi,
+            deskripsi: updatedUser.deskripsi,
             joined_date: updatedUser.created_at
                 ? updatedUser.created_at.split("T")[0]
                 : "Belum ada tanggal",
