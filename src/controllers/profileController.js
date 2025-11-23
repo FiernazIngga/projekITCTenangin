@@ -6,7 +6,18 @@ import { supabase } from "../databases/supabaseClient.js";
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Middleware upload untuk 1 file dengan field name 'file'
-export const uploadMiddleware = upload.single("file");
+export const uploadMiddleware = (req, res, next) => {
+    upload.single("file")(req, res, (err) => {
+        if (err && err.code === "LIMIT_UNEXPECTED_FILE") {
+            return next(); // abaikan kalau field file tidak ada
+        }
+        if (err) {
+            return res.status(400).json({ error: err.message });
+        }
+        next();
+    });
+};
+
 
 // // Upload foto profil ke Supabase Storage dan simpan ke DB
 // export const profileAksi = async (req, res) => {
