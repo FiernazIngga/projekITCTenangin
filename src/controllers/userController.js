@@ -101,6 +101,7 @@ export const dataUserDashboard = async (req, res, next) => {
             umur: data.umur ?? "Belum diatur",
             jenis_kelamin: data.jenis_kelamin ?? "Belum diatur",
             lokasi: data.lokasi ?? "Belum diatur",
+            deskripsi: data.deskripsi ?? "Belum diatur",
             joined_date: data.created_at
                 ? data.created_at.split("T")[0]
                 : "Belum ada tanggal",
